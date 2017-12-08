@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BookMarkApplication</title>
+	<link rel="stylesheet" href="https://unpkg.com/tachyons@4.9.0/css/tachyons.min.css">
+
+</head>
+	
+<body onload="fetchBookmarks()">
+	<section class="mw5 mw7-ns center bg-light-gray pa3 ph5-ns">
+		<h1 class="mt0">BookMark Your App</h1>
+		<hr>
+		<form class="pa4 black-80" id="myForm">
+		  <div class="measure">
+		    <label for="name" class="f6 b db mb2">Website Name :</label>
+		    <input id="name" class="input-reset ba b--black-20 pa2 mb2 db w-100" type="text" aria-describedby="name-desc">
+		    <label for="link" class="f6 b db mb2">Website Url :</label>
+		    <input id="url" class="input-reset ba b--black-20 pa2 mb2 db w-100" type="email" >
+		    <a class="f6 link dim ph3 pv2 mb2 dib white bg-light-purple" href="#0">Submit</a>
+
+		  </div>
+		</form> 
+		<hr style="color: black;">
+
+		<div class="ba b--dotted bw1">
+			<div id="bookmarksResult"></div>
+		</div>
+
+	</section>
+
+<script type="text/javascript">
+	document.getElementById('myForm').addEventListener('click', saveBookmark);
+	function saveBookmark(e){
+		var siteName = document.getElementById('name').value;
+		var siteUrl = document.getElementById('url').value;
+
+		var bookmark ={
+			name: siteName,
+			url: siteUrl
+		}
+		console.log(bookmark);
+		//localStorage Test
+		if(localStorage.getItem('bookmarks')=== null){
+			var bookmarks = [];
+			bookmarks.push(bookmark);
+			localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+		}else{
+			var bookmarks = JSON.parse(localStorage.getItem('bookmarks'));	
+			bookmarks.push(bookmark);
+			localStorage.setItem('bookmarks', JSON.stringify(bookmarks
+				));
+			}	
+			fetchBookmarks();
+		e.preventDefault(); // prevent form from submission
+
+	}
+	function deleteBookmarks(url){
+		var bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+		for(var i = 0; i<bookmarks.length; i++){
+			if(bookmarks[i].url == url){
+				bookmarks.splice(i, 1);
+			}
+		}
+		//reset bookmarks in local storage
+		localStorage.setItem('bookmark', JSON.stringify(bookmarks));
+		fetchBookmarks();
+	}
+	function fetchBookmarks(){
+		var bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+		console.log(bookmarks);
+
+		var results = document.getElementById('bookmarksResult');
+		results.innerHTML = '';
+		for(var i = 0; i< bookmarks.length; i++){
+			var name = bookmarks[i].name;
+			var url = bookmarks[i].url;
+			results.innerHTML = '<div >'+
+								'<h3>' + name +
+								'<a href="'+ url +'"> Visit </a>' +
+								'<a onclick= "deleteBookmarks(\''+url+'\')" href= "#"> Delete</a>' + '</h3>' + '</div'
+
+		}
+	}
+
+</script>
+</body>
+</html>
